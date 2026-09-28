@@ -1,15 +1,16 @@
-# SRS — Office Attendance, Leave & Meal-Planning Management System (v1.2)
+# SRS — Office Attendance, Leave & Meal-Planning Management System (v1.3)
 
 Sep 25, 2026 · @Munna Khan
 
 ## Document Info & Change Log
 
-v1.1-এ v1.0-এর সব Edge Case ও Open Question-এর উত্তর যুক্ত করা হয়েছে; ডকুমেন্টটি এখন development team-এর কাছে handover-ready (কোনো open question বাকি নেই)। v1.2-এ Employee entity-তে `email_address` field যোগ হয়েছে (implementation-time confirmation, Sep 26, 2026)।
+v1.1-এ v1.0-এর সব Edge Case ও Open Question-এর উত্তর যুক্ত করা হয়েছে; ডকুমেন্টটি এখন development team-এর কাছে handover-ready (কোনো open question বাকি নেই)। v1.2-এ Employee entity-তে `email_address` field যোগ হয়েছে (implementation-time confirmation, Sep 26, 2026)। v1.3-এ Login/Auth mechanism চূড়ান্ত হয়েছে (implementation-time confirmation, Sep 29, 2026): Employee entity-তে `password_hash` field যোগ।
 
 **Prepared for:** Internal Office (20 Employees) · **Type:** Business Requirements + Functional Specification · **Prepared as:** Project Manager Documentation
 
 | Version | পরিবর্তন |
 | --- | --- |
+| v1.3 | Employee entity-তে `password_hash` field যোগ; Login/Auth flow চূড়ান্ত — Admin initial password সেট করে profile বানাবে, Employee login-এর পর profile settings থেকে password change করতে পারবে |
 | v1.2 | Employee entity-তে `email_address` field যোগ (mobile\_number-এর পাশাপাশি, বাদ দিয়ে না) |
 | v1.1 | Declaration window, default "Home", retry counter, same-day leave, holiday auto-cancel, check-out trust, SMS channel — সব চূড়ান্ত; Section ৮ ও ৯ resolved |
 | v1.0 | প্রাথমিক Draft |
@@ -48,6 +49,7 @@ Attendance, leave ও chef meal-count — তিনটা ম্যানুয�
 **Employee**
 
 - employee\_id, name, team\_name, joining\_date, mobile\_number (reminder SMS-এর জন্য), email\_address (v1.2 নতুন যোগ)
+- password\_hash (v1.3 নতুন যোগ) — Admin profile তৈরির সময় initial/temporary password সেট করে; Employee login-এর পর নিজের profile settings থেকে password change করতে পারবে। Plain-text password কখনো store হবে না, শুধু hash।
 - role: Employee / Team Lead (Admin assign করবে)
 - reporting\_team\_lead\_id
 - week\_start\_day
