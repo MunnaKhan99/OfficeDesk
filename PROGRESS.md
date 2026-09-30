@@ -18,21 +18,31 @@ Static UI → Backend → Frontend-Backend Integration — প্রতিটা
 
 ## ✅ Auth Screen — Login Page
 
-**Status: Static UI সম্পূর্ণ (Backend/Integration বাকি)**
+**Status: Backend সম্পূর্ণ ও টেস্টেড (Frontend Integration বাকি)**
 
 - Route: `src/app/login/page.tsx` + `src/app/login/_components/LoginForm.tsx`
 - Design reference: `designs/module1/` (Desktop 1440, Tablet 768, Mobile 375 + ৪টা state variant)
-- করা হয়েছে:
+- Static UI-তে করা হয়েছে:
   - Semantic form (label/input association, placeholder vs label, void elements ইত্যাদি শিখে শিখে করা)
   - Mobile → Tablet → Desktop — তিনটা breakpoint অনুযায়ী responsive layout (Tailwind mobile-first)
   - Calendar illustration (`src/assets/LoginIllustrator.png`) `next/image` দিয়ে যোগ করা, breakpoint অনুযায়ী position/size আলাদা
   - Copyright footer (mobile/tablet-এ page bottom-এ, desktop-এ banner-এর ভিতরে)
-- বাকি আছে (পরে "interactivity/state" module-এ):
-  - Password show/hide টগল কাজ করানো (এখন শুধু icon বসানো আছে)
-  - `href=""` খালি লিংকগুলো (Forgot password, Contact admin) — routing module-এ ঠিক হবে
-  - ৪টা state variant (Focused input, Error, Loading, Account locked) — এখনো implement করা হয়নি
-  - Backend API (actual authentication) + frontend integration
-
+- Backend-এ করা হয়েছে:
+  - Neon (PostgreSQL) database সংযুক্ত, `.env`-এ `DATABASE_URL` সেট
+  - Prisma ORM সেটআপ (`prisma7.config.ts`, stable version `7.10.0` pin করা — RC version এড়ানো হয়েছে)
+  - `Employee` model ও `Role` enum migration করে database-এ table তৈরি
+  - `src/lib/prisma.ts` — singleton Prisma Client (`@prisma/adapter-pg` driver adapter সহ, Prisma 7-এর নতুন pattern)
+  - `bcryptjs` দিয়ে password hashing
+  - `prisma/seed.ts` দিয়ে প্রথম test Admin user database-এ ঢোকানো হয়েছে (password `.env`-এর `SEED_ADMIN_PASSWORD` থেকে, hardcoded না)
+  - `src/auth.ts` — Auth.js (NextAuth v5-beta) কনফিগার, Credentials provider দিয়ে email+password verify logic
+  - `src/app/api/auth/[...nextauth]/route.ts` — Auth.js-এর API route
+  - `jwt`/`session` callbacks দিয়ে `role` ও `id` custom field session-এ propagate করা, `src/types/next-auth.d.ts`-এ TypeScript module augmentation
+  - Manual QA টেস্ট পাস: সঠিক credential দিয়ে login → session-এ role সহ সব তথ্য আসে; ভুল password ও অস্তিত্বহীন email → দুটোই ঠিকভাবে reject হয়
+- বাকি আছে:
+  - Frontend Integration: static `LoginForm`-কে Auth.js-এর `signIn()`-এর সাথে যুক্ত করা
+  - Middleware দিয়ে protected route তৈরি (login ছাড়া `/attendance`, `/leave` ইত্যাদিতে ঢোকা আটকানো)
+  - Login-এর ৪টা UI state variant (Focused, Error, Loading, Account locked) বাস্তবায়ন
+  - Password show/hide টগল কার্যকর করা
 ---
 
 ## ⬜ Module 1: Employee Onboarding / Initial Setup
